@@ -15,10 +15,22 @@ module.exports = {
   async create(request, response) {
     const { nome, telefone, cidadeInteresse } = request.body;
 
-    if (!nome || !telefone || !cidadeInteresse) {
-      return response.status(400).json({
+    if (!nome && !telefone && !cidadeInteresse) {
+      return response.status(404).json({
         error:
-          'Está faltando informação em Nome, Telefone ou Cidade de interesse.',
+          'Está faltando informação em: \n\nNome completo\nTelefone\nCidade de interesse',
+      });
+    } else if (!nome) {
+      return response.status(404).json({
+        error: 'Está faltando informação em: \n\nNome completo',
+      });
+    } else if (!telefone) {
+      return response.status(404).json({
+        error: 'Está faltando informação em: \n\nTelefone',
+      });
+    } else if (!cidadeInteresse) {
+      return response.status(404).json({
+        error: 'Está faltando informação em: \n\nCidade de interesse',
       });
     }
 
@@ -27,6 +39,7 @@ module.exports = {
       nome,
       telefone,
       cidadeInteresse,
+      dataCriacao: Date.now(),
     });
 
     try {
@@ -36,7 +49,10 @@ module.exports = {
         .status(201)
         .json({ message: 'Cliente cadastrado com sucesso.' });
     } catch (err) {
-      response.status(400).json({ error: err.message });
+      return response.status(404).json({
+        error:
+          'Está faltando informação em Nome completo\nTelefone\nCidade de interesse.',
+      });
     }
   },
   async update(request, response) {

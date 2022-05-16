@@ -17,6 +17,17 @@ const clienteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  dataCriacao: {
+    type: Date,
+  },
+  contatoRealizado: {
+    type: Boolean,
+    default: false,
+  },
+  aceiteDosTermos: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 module.exports = mongoose.model('Cliente', clienteSchema);
