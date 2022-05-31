@@ -5,7 +5,7 @@ const clienteSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  nome: {
+  nomeCompleto: {
     type: String,
     required: true,
   },

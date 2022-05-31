@@ -13,14 +13,14 @@ module.exports = {
     }
   },
   async create(request, response) {
-    const { nome, telefone, cidadeInteresse } = request.body;
+    const { nomeCompleto, telefone, cidadeInteresse } = request.body;
 
-    if (!nome && !telefone && !cidadeInteresse) {
+    if (!nomeCompleto && !telefone && !cidadeInteresse) {
       return response.status(404).json({
         error:
           'Está faltando informação em: \n\nNome completo\nTelefone\nCidade de interesse',
       });
-    } else if (!nome) {
+    } else if (!nomeCompleto) {
       return response.status(404).json({
         error: 'Está faltando informação em: \n\nNome completo',
       });
@@ -36,7 +36,7 @@ module.exports = {
 
     const cliente = new Cliente({
       _id: uuid(),
-      nome,
+      nomeCompleto,
       telefone,
       cidadeInteresse,
       dataCriacao: Date.now(),
@@ -56,16 +56,16 @@ module.exports = {
     }
   },
   async update(request, response) {
-    const { nome, telefone, cidadeInteresse } = request.body;
+    const { nomeCompleto, telefone, cidadeInteresse } = request.body;
 
-    if (!nome && !telefone && !cidadeInteresse) {
+    if (!nomeCompleto && !telefone && !cidadeInteresse) {
       return response.status(400).json({
         error:
           'É necessário informar um novo Nome, Telefone ou Cidade de interesse.',
       });
     }
 
-    if (nome) response.cliente.nome = nome;
+    if (nomeCompleto) response.cliente.nomeCompleto = nomeCompleto;
     if (telefone) response.cliente.telefone = telefone;
     if (cidadeInteresse) response.cliente.cidadeInteresse = cidadeInteresse;
 
