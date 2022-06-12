@@ -5,41 +5,33 @@ const Cliente = require('../models/Cliente');
 
 module.exports = {
   async index(request, response) {
+    const { _page = 1, _limit, nomeCompleto_like } = request.query;
     try {
-      const clientes = await Cliente.find();
-      return response.status(200).json({ clientes });
+      const clientes = await Cliente.find({
+        nomeCompleto: { $regex: new RegExp(nomeCompleto_like, 'i') },
+      })
+        .limit(_limit * 1)
+        .skip((_page - 1) * _limit);
+      response.append('X-Total-Count', clientes.length);
+      return response.status(200).json(clientes);
+    } catch (err) {
+      response.status(500).json({ error: err.message });
+    }
+  },
+  async getDetalhe(request, response) {
+    const { id } = request.params;
+    try {
+      const cliente = await Cliente.findById(id);
+      return response.status(200).json(cliente);
     } catch (err) {
       response.status(500).json({ error: err.message });
     }
   },
   async create(request, response) {
-    const { nomeCompleto, telefone, cidadeInteresse } = request.body;
-
-    if (!nomeCompleto && !telefone && !cidadeInteresse) {
-      return response.status(404).json({
-        error:
-          'Está faltando informação em: \n\nNome completo\nTelefone\nCidade de interesse',
-      });
-    } else if (!nomeCompleto) {
-      return response.status(404).json({
-        error: 'Está faltando informação em: \n\nNome completo',
-      });
-    } else if (!telefone) {
-      return response.status(404).json({
-        error: 'Está faltando informação em: \n\nTelefone',
-      });
-    } else if (!cidadeInteresse) {
-      return response.status(404).json({
-        error: 'Está faltando informação em: \n\nCidade de interesse',
-      });
-    }
-
     const cliente = new Cliente({
       _id: uuid(),
-      nomeCompleto,
-      telefone,
-      cidadeInteresse,
       dataCriacao: Date.now(),
+      ...request.body,
     });
 
     try {
@@ -49,31 +41,16 @@ module.exports = {
         .status(201)
         .json({ message: 'Cliente cadastrado com sucesso.' });
     } catch (err) {
-      return response.status(404).json({
-        error:
-          'Está faltando informação em Nome completo\nTelefone\nCidade de interesse.',
-      });
+      response.status(500).json({ error: err.message });
     }
   },
   async update(request, response) {
-    const { nomeCompleto, telefone, cidadeInteresse } = request.body;
-
-    if (!nomeCompleto && !telefone && !cidadeInteresse) {
-      return response.status(400).json({
-        error:
-          'É necessário informar um novo Nome, Telefone ou Cidade de interesse.',
-      });
-    }
-
-    if (nomeCompleto) response.cliente.nomeCompleto = nomeCompleto;
-    if (telefone) response.cliente.telefone = telefone;
-    if (cidadeInteresse) response.cliente.cidadeInteresse = cidadeInteresse;
-
+    const body = request.body;
     try {
-      await response.cliente.save();
+      await Cliente.findById(id).updateOne(body);
       return response
         .status(200)
-        .json({ message: 'Cliente atualizado com sucesso.' });
+        .json({ message: 'Cliente atualizada com sucesso.' });
     } catch (err) {
       response.status(500).json({ error: err.message });
     }

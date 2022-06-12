@@ -1,14 +1,10 @@
 const res = require('express/lib/response');
-const { validate: isUuid } = require('uuid');
 const Cliente = require('../models/Cliente');
+const clienteSchema = require('../validations/clienteValidation');
 
 module.exports = {
   async validateId(request, response, next) {
     const { id } = request.params;
-
-    if (!isUuid(id)) {
-      return response.status(400).json({ error: 'Id inválido' });
-    }
 
     try {
       const cliente = await Cliente.findById(id);
@@ -21,5 +17,15 @@ module.exports = {
     }
 
     next();
+  },
+  async validation(request, response, next) {
+    const body = request.body;
+
+    try {
+      await clienteSchema.validate(body);
+      next();
+    } catch (err) {
+      return response.status(500).json({ campo: err.path, erro: err.message });
+    }
   },
 };

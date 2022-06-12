@@ -1,14 +1,10 @@
 const res = require('express/lib/response');
-const { validate: isUuid } = require('uuid');
 const Cidade = require('../models/Cidade');
+const cidadeSchema = require('../validations/cidadeValidation');
 
 module.exports = {
   async validateId(request, response, next) {
     const { id } = request.params;
-
-    if (!isUuid(id)) {
-      return response.status(400).json({ error: 'Id inválido' });
-    }
 
     try {
       const cidade = await Cidade.findById(id);
@@ -21,5 +17,31 @@ module.exports = {
     }
 
     next();
+  },
+  async validation(request, response, next) {
+    const body = request.body;
+
+    try {
+      await cidadeSchema.validate(body);
+      next();
+    } catch (err) {
+      return response.status(500).json({ campo: err.path, erro: err.message });
+    }
+  },
+  async indexValidation(request, response, next) {
+    const { cidade } = request.body;
+
+    try {
+      const cidadeExistente = await Cidade.find({ cidade: cidade });
+      if (cidadeExistente.length > 0) {
+        return response.status(404).json({
+          error: 'Cidade já cadastrada no sistema.',
+          cidadeExistente: cidadeExistente,
+        });
+      }
+      next();
+    } catch (err) {
+      return response.status(500).json({ error: err.message });
+    }
   },
 };

@@ -5,6 +5,10 @@ const empreendimentoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  ativo: {
+    type: Boolean,
+    require: true,
+  },
   to: {
     type: String,
     required: true,
@@ -36,8 +40,8 @@ const empreendimentoSchema = new mongoose.Schema({
   imagens: {
     type: [
       {
-        imagem: { type: String },
-        alt: { type: String },
+        imagem: { type: String, required: true },
+        alt: { type: String, required: true },
       },
     ],
     required: true,

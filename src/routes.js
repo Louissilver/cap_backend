@@ -10,10 +10,20 @@ const EmpreendimentoMiddleware = require('./middlewares/EmpreendimentoMiddleware
 
 // Clientes
 routes.get('/clientes', ClienteController.index);
-routes.post('/clientes', ClienteController.create);
+routes.get(
+  '/clientes/:id',
+  ClienteMiddleware.validateId,
+  ClienteController.getDetalhe
+);
+routes.post(
+  '/clientes',
+  ClienteMiddleware.validation,
+  ClienteController.create
+);
 routes.put(
   '/clientes/:id',
   ClienteMiddleware.validateId,
+  ClienteMiddleware.validation,
   ClienteController.update
 );
 routes.delete(
@@ -24,10 +34,22 @@ routes.delete(
 
 // Cidades
 routes.get('/cidades', CidadeController.index);
-routes.post('/cidades', CidadeController.create);
+routes.get(
+  '/cidades/:id',
+  CidadeMiddleware.validateId,
+  CidadeController.getDetalhe
+);
+routes.post(
+  '/cidades',
+  CidadeMiddleware.validation,
+  CidadeMiddleware.indexValidation,
+  CidadeController.create
+);
 routes.put(
   '/cidades/:id',
   CidadeMiddleware.validateId,
+  CidadeMiddleware.indexValidation,
+  CidadeMiddleware.validation,
   CidadeController.update
 );
 routes.delete(
@@ -42,6 +64,24 @@ routes.get(
   '/empreendimentos/:id',
   EmpreendimentoMiddleware.validateId,
   EmpreendimentoController.getDetalhe
+);
+routes.post(
+  '/empreendimentos',
+  EmpreendimentoMiddleware.indexValidation,
+  EmpreendimentoMiddleware.validation,
+  EmpreendimentoController.create
+);
+routes.put(
+  '/empreendimentos/:id',
+  EmpreendimentoMiddleware.indexValidation,
+  EmpreendimentoMiddleware.validateId,
+  EmpreendimentoMiddleware.validation,
+  EmpreendimentoController.update
+);
+routes.delete(
+  '/empreendimentos/:id',
+  EmpreendimentoMiddleware.validateId,
+  EmpreendimentoController.delete
 );
 
 module.exports = routes;

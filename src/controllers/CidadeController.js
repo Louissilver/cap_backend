@@ -5,9 +5,29 @@ const Cidade = require('../models/Cidade');
 
 module.exports = {
   async index(request, response) {
+    const { _page = 1, _limit, cidade_like } = request.query;
+
     try {
-      const cidades = await Cidade.find().sort({ cidade: 1 });
-      return response.status(200).json({ cidades: cidades });
+      const cidades = await Cidade.find({
+        cidade: { $regex: new RegExp(cidade_like, 'i') },
+      })
+        .sort({
+          cidade: 1,
+        })
+        .limit(_limit * 1)
+        .skip((_page - 1) * _limit);
+
+      response.append('X-Total-Count', cidades.length);
+      return response.status(200).json(cidades);
+    } catch (err) {
+      response.status(500).json({ error: err.message });
+    }
+  },
+  async getDetalhe(request, response) {
+    const { id } = request.params;
+    try {
+      const cidade = await Cidade.findById(id);
+      return response.status(200).json(cidade);
     } catch (err) {
       response.status(500).json({ error: err.message });
     }
@@ -15,16 +35,9 @@ module.exports = {
   async create(request, response) {
     const { cidade } = request.body;
 
-    if (!cidade) {
-      return response.status(404).json({
-        error: 'Está faltando informação em: \n\nCidade',
-      });
-    }
-
     const varCidade = new Cidade({
       _id: uuid(),
       cidade,
-      dataCriacao: Date.now(),
     });
 
     try {
@@ -34,27 +47,16 @@ module.exports = {
         .status(201)
         .json({ message: 'Cidade cadastrada com sucesso.' });
     } catch (err) {
-      return response.status(404).json({
-        error: 'Está faltando informação em: \n\nCidade',
-      });
+      response.status(500).json({ error: err.message });
     }
   },
   async update(request, response) {
-    const { cidade } = request.body;
-
-    if (!cidade) {
-      return response.status(400).json({
-        error: 'É necessário informar o nome da cidade.',
-      });
-    }
-
-    if (cidade) response.cidade.cidade = cidade;
-
+    const body = request.body;
     try {
-      await response.cidade.save();
+      await Cidade.findById(id).updateOne(body);
       return response
         .status(200)
-        .json({ message: 'Cidade atualizado com sucesso.' });
+        .json({ message: 'Cidade atualizada com sucesso.' });
     } catch (err) {
       response.status(500).json({ error: err.message });
     }
