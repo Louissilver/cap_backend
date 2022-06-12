@@ -7,12 +7,14 @@ module.exports = {
   async index(request, response) {
     const { _page = 1, _limit, nomeCompleto_like } = request.query;
     try {
+      const totalClientes = await Cliente.find();
       const clientes = await Cliente.find({
         nomeCompleto: { $regex: new RegExp(nomeCompleto_like, 'i') },
       })
         .limit(_limit * 1)
         .skip((_page - 1) * _limit);
-      response.append('X-Total-Count', clientes.length);
+      response.append('X-Total-Count', totalClientes.length);
+      response.append('Access-Control-Expose-Headers', 'X-Total-Count');
       return response.status(200).json(clientes);
     } catch (err) {
       response.status(500).json({ error: err.message });
@@ -39,7 +41,7 @@ module.exports = {
 
       return response
         .status(201)
-        .json({ message: 'Cliente cadastrado com sucesso.' });
+        .json({ message: 'Cliente cadastrado com sucesso.', _id: cliente._id });
     } catch (err) {
       response.status(500).json({ error: err.message });
     }

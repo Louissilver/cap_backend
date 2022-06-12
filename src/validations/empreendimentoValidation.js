@@ -4,7 +4,7 @@ const urlRegExp = RegExp('(http(s?):)([/|.|\\w|\\s|-])*\\.(?:jpg|gif|png)');
 const stringSimplesExp = RegExp('^[a-zA-Z0-9_-]+$');
 
 const empreendimentoSchema = yup.object().shape({
-  ativo: yup.boolean().required(),
+  ativo: yup.boolean(),
   titulo: yup.string().required(),
   to: yup
     .string()

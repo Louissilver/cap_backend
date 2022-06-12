@@ -8,13 +8,15 @@ module.exports = {
     const { _page = 1, _limit, titulo_like } = request.query;
 
     try {
+      const totalEmpreendimentos = await Empreendimento.find();
       const empreendimentos = await Empreendimento.find({
         titulo: { $regex: new RegExp(titulo_like, 'i') },
       })
         .limit(_limit * 1)
         .skip((_page - 1) * _limit);
 
-      response.append('X-Total-Count', empreendimentos.length);
+      response.append('X-Total-Count', totalEmpreendimentos.length);
+      response.append('Access-Control-Expose-Headers', 'X-Total-Count');
       return response.status(200).json(empreendimentos);
     } catch (err) {
       response.status(500).json({ error: err.message });
@@ -42,7 +44,7 @@ module.exports = {
 
       return response.status(201).json({
         message: 'Empreendimento cadastrado com sucesso.',
-        titulo: request.body.titulo,
+        to: empreendimento.to,
       });
     } catch (err) {
       response.status(500).json({ error: err.message });
@@ -62,8 +64,9 @@ module.exports = {
     }
   },
   async delete(request, response) {
+    const { id } = request.params;
     try {
-      await response.empreendimento.delete();
+      await Empreendimento.findOneAndDelete({ to: id });
       return response
         .status(200)
         .json({ message: 'Empreendimento removido com sucesso.' });

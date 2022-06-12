@@ -8,6 +8,7 @@ module.exports = {
     const { _page = 1, _limit, cidade_like } = request.query;
 
     try {
+      const totalCidades = await Cidade.find();
       const cidades = await Cidade.find({
         cidade: { $regex: new RegExp(cidade_like, 'i') },
       })
@@ -17,7 +18,8 @@ module.exports = {
         .limit(_limit * 1)
         .skip((_page - 1) * _limit);
 
-      response.append('X-Total-Count', cidades.length);
+      response.append('X-Total-Count', totalCidades.length);
+      response.append('Access-Control-Expose-Headers', 'X-Total-Count');
       return response.status(200).json(cidades);
     } catch (err) {
       response.status(500).json({ error: err.message });
@@ -43,9 +45,10 @@ module.exports = {
     try {
       await varCidade.save();
 
-      return response
-        .status(201)
-        .json({ message: 'Cidade cadastrada com sucesso.' });
+      return response.status(201).json({
+        message: 'Cidade cadastrada com sucesso.',
+        _id: varCidade._id,
+      });
     } catch (err) {
       response.status(500).json({ error: err.message });
     }
