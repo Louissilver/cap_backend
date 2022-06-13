@@ -54,8 +54,9 @@ module.exports = {
   async update(request, response) {
     const { id } = request.params;
     const body = request.body;
+    delete body._id;
     try {
-      await Empreendimento.findOne({ to: id }).updateOne(body);
+      await Empreendimento.findOneAndUpdate({ to: id }, body);
       return response
         .status(200)
         .json({ message: 'Empreendimento atualizado com sucesso.' });

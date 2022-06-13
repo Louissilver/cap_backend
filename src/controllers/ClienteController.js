@@ -49,7 +49,7 @@ module.exports = {
   async update(request, response) {
     const body = request.body;
     try {
-      await Cliente.findById(id).updateOne(body);
+      await Cliente.findById(body._id).updateOne(body);
       return response
         .status(200)
         .json({ message: 'Cliente atualizada com sucesso.' });

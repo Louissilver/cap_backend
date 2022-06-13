@@ -31,11 +31,13 @@ module.exports = {
     }
   },
   async indexValidation(request, response, next) {
-    const { to } = request.body;
-
+    const { _id, to } = request.body;
     try {
       const empreendimentoExistente = await Empreendimento.find({ to: to });
-      if (empreendimentoExistente.length > 0) {
+      if (
+        empreendimentoExistente.length > 0 &&
+        _id !== empreendimentoExistente[0]._id
+      ) {
         return response
           .status(404)
           .json({ error: 'URL relativa já cadastrada no sistema.' });
