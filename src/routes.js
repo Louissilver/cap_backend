@@ -10,6 +10,7 @@ const EmpreendimentoMiddleware = require('./middlewares/EmpreendimentoMiddleware
 
 // Clientes
 routes.get('/clientes', ClienteController.index);
+routes.get('/clientes/data', ClienteController.getAllByDate);
 routes.get(
   '/clientes/:id',
   ClienteMiddleware.validateId,

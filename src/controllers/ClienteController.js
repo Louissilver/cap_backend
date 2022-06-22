@@ -20,6 +20,52 @@ module.exports = {
       response.status(500).json({ error: err.message });
     }
   },
+  async getAllByDate(request, response) {
+    let { dataInicial, dataFinal } = request.query;
+
+    try {
+      if (dataInicial && dataFinal) {
+        const clientes = await Cliente.find({
+          dataCriacao: {
+            $gte: new Date(`${dataInicial}T00:00:00.000Z`),
+            $lt: new Date(`${dataFinal}T23:59:59.999Z`),
+          },
+        });
+        response.append('X-Total-Count', clientes.length);
+        response.append('Access-Control-Expose-Headers', 'X-Total-Count');
+        return response.status(200).json(clientes);
+      }
+      if (dataInicial && !dataFinal) {
+        const clientes = await Cliente.find({
+          dataCriacao: {
+            $gte: new Date(`${dataInicial}T00:00:00.000Z`),
+          },
+        });
+        response.append('X-Total-Count', clientes.length);
+        response.append('Access-Control-Expose-Headers', 'X-Total-Count');
+        return response.status(200).json(clientes);
+      }
+      if (!dataInicial && dataFinal) {
+        const clientes = await Cliente.find({
+          dataCriacao: {
+            $lt: new Date(`${dataFinal}T23:59:59.999Z`),
+          },
+        });
+        response.append('X-Total-Count', clientes.length);
+        response.append('Access-Control-Expose-Headers', 'X-Total-Count');
+        return response.status(200).json(clientes);
+      }
+      if (!dataInicial && !dataFinal) {
+        const clientes = await Cliente.find();
+        console.log(clientes);
+        response.append('X-Total-Count', clientes.length);
+        response.append('Access-Control-Expose-Headers', 'X-Total-Count');
+        return response.status(200).json(clientes);
+      }
+    } catch (err) {
+      response.status(500).json({ error: err.message });
+    }
+  },
   async getDetalhe(request, response) {
     const { id } = request.params;
     try {
