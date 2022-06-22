@@ -57,7 +57,6 @@ module.exports = {
       }
       if (!dataInicial && !dataFinal) {
         const clientes = await Cliente.find();
-        console.log(clientes);
         response.append('X-Total-Count', clientes.length);
         response.append('Access-Control-Expose-Headers', 'X-Total-Count');
         return response.status(200).json(clientes);
