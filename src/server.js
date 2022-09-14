@@ -15,5 +15,5 @@ app.use(express.json());
 app.use(routes);
 
 app.listen(port, () => {
-  console.log(`🔆 Aplicação rodando na URL https://localhost:${port}`);
+  console.log(`🔆 Aplicação rodando na URL https://movese.com.br`);
 });
