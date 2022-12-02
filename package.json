@@ -8,10 +8,10 @@
     "express": "^4.17.3",
     "mongoose": "^6.3.1",
     "uuid": "^8.3.2",
+    "dotenv": "^16.0.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "dotenv": "^16.0.0",
     "nodemon": "^2.0.15"
   },
   "scripts": {
