@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const routes = require('./routes');
 const conn = require('./database');
@@ -15,5 +13,5 @@ app.use(express.json());
 app.use(routes);
 
 app.listen(port, () => {
-  console.log(`🔆 Aplicação rodando na URL https://movese.com.br`);
+  console.log(`🔆 Aplicação rodando na URL https://capbackendapi.herokuapp.com/`);
 });
